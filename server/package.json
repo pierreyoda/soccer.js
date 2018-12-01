@@ -1,0 +1,32 @@
+{
+  "name": "soccerjs-server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "dev": "nodemon",
+    "start": "ts-node src/main.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/feathersjs__configuration": "^1.0.1",
+    "@types/feathersjs__errors": "^3.2.1",
+    "@types/feathersjs__express": "^1.1.4",
+    "@types/feathersjs__feathers": "^3.1.0",
+    "@types/feathersjs__socketio": "^3.0.3",
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.11",
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.7",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^7.0.1"
+  },
+  "dependencies": {
+    "@feathersjs/configuration": "^2.0.4",
+    "@feathersjs/errors": "^3.3.4",
+    "@feathersjs/express": "^1.2.7",
+    "@feathersjs/feathers": "^3.2.3",
+    "@feathersjs/socketio": "^3.2.7",
+    "winston": "^3.1.0"
+  }
+}
