@@ -613,6 +613,12 @@
     events "^3.0.0"
     uberproto "^2.0.2"
 
+"@feathersjs/socketio-client@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@feathersjs/socketio-client/-/socketio-client-1.1.5.tgz#c77572dda0bd1a5fd7c01f8fa28dc6ce637eaca2"
+  dependencies:
+    "@feathersjs/transport-commons" "^4.1.6"
+
 "@feathersjs/socketio@^3.2.7":
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/@feathersjs/socketio/-/socketio-3.2.7.tgz#6068c75c148afd266f346e508b2d4f475e3ca7b7"
@@ -716,6 +722,12 @@
   version "3.1.2"
   resolved "http://registry.npmjs.org/@types/feathersjs__socket-commons/-/feathersjs__socket-commons-3.1.2.tgz#1d31a4710c62187e4b89667414ff8e6911c7b8e7"
 
+"@types/feathersjs__socketio-client@^1.0.1":
+  version "1.0.1"
+  resolved "http://registry.npmjs.org/@types/feathersjs__socketio-client/-/feathersjs__socketio-client-1.0.1.tgz#913224bf44c2b4f0432718c4f53470968273427f"
+  dependencies:
+    "@types/socket.io-client" "*"
+
 "@types/feathersjs__socketio@^3.0.3":
   version "3.0.3"
   resolved "http://registry.npmjs.org/@types/feathersjs__socketio/-/feathersjs__socketio-3.0.3.tgz#f213d6d55340ecd044032ee642d5cf050e53f871"
@@ -745,6 +757,10 @@
   dependencies:
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
+
+"@types/socket.io-client@*", "@types/socket.io-client@^1.4.32":
+  version "1.4.32"
+  resolved "https://registry.yarnpkg.com/@types/socket.io-client/-/socket.io-client-1.4.32.tgz#988a65a0386c274b1c22a55377fab6a30789ac14"
 
 "@types/socket.io@*":
   version "2.1.0"
@@ -3089,7 +3105,7 @@ event-pubsub@4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/event-pubsub/-/event-pubsub-4.3.0.tgz#f68d816bc29f1ec02c539dc58c8dd40ce72cb36e"
 
-eventemitter3@^3.0.0:
+eventemitter3@^3.0.0, eventemitter3@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.0.tgz#090b4d6cdbd645ed10bf750d4b5407942d7ba163"
 
@@ -6189,6 +6205,12 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
 
+phaser@^3.15.1:
+  version "3.15.1"
+  resolved "https://registry.yarnpkg.com/phaser/-/phaser-3.15.1.tgz#17d41fb5b310fb062952e29d9bb26a99c90d3a44"
+  dependencies:
+    eventemitter3 "^3.1.0"
+
 pify@^2.0.0:
   version "2.3.0"
   resolved "http://registry.npmjs.org/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
@@ -7350,7 +7372,7 @@ socket.io-adapter@~1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-1.1.1.tgz#2a805e8a14d6372124dd9159ad4502f8cb07f06b"
 
-socket.io-client@2.2.0:
+socket.io-client@2.2.0, socket.io-client@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-2.2.0.tgz#84e73ee3c43d5020ccc1a258faeeb9aec2723af7"
   dependencies:

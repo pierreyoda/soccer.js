@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <img alt="Vue logo" src="../assets/logo.png">
-    <h1>Soccer.js</h1>
+  <div class="w-full">
+    GAME CANVAS
   </div>
 </template>
 
@@ -9,5 +8,5 @@
 import { Component, Vue } from "vue-property-decorator";
 
 @Component
-export default class Home extends Vue {}
+export default class GameCanvas extends Vue {}
 </script>

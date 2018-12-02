@@ -1,17 +1,18 @@
 import { default as express } from "@feathersjs/express";
 import feathers from "@feathersjs/feathers";
-import feathersConfiguration from "@feathersjs/configuration";
-import feathersSocketIO from "@feathersjs/socketio";
+import configuration from "@feathersjs/configuration";
+import socketio from "@feathersjs/socketio";
 
 import logger from "./logger";
+import channels from "./channels";
 
 const app = express(feathers());
 
 // configuration
-app.configure(feathersConfiguration());
+app.configure(configuration());
 
 // plugins
-app.configure(feathersSocketIO());
+app.configure(socketio(channels));
 
 // error handling
 app.use(express.errorHandler({ logger }));
