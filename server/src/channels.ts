@@ -8,16 +8,20 @@ import {
   ClientJoinRoom,
 } from "../../core/src/payloads"; // FIXME: yarn workspace path?
 import logger from "./logger";
-import { Room, Player } from "./soccer";
+import { Room, Player } from "./game";
 import app from "./app";
 
 const channels = (io: SocketIO.Server) => {
+  let totalPlayers = 0;
+
   io.on("connection", (socket: Socket) => {
     logger.info(`Connection established with client ID = ${socket.id}.`);
+    ++totalPlayers;
     let player: Player;
 
     socket.on("disconnect", () => {
       logger.info(`Connection terminated with client ID = ${socket.id}.`);
+      --totalPlayers;
     });
 
     socket.on(

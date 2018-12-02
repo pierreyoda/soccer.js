@@ -1,5 +1,5 @@
 import { ClientCreateRoom } from "../../../../core/src/payloads";
-import { Room } from "../../soccer";
+import { Room } from "../../game";
 
 export default class RoomsService {
   protected rooms: Room[] = [];
