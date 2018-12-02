@@ -5,6 +5,7 @@ import socketio from "@feathersjs/socketio";
 
 import logger from "./logger";
 import channels from "./channels";
+import services from "./services";
 
 const app = express(feathers());
 
@@ -13,6 +14,9 @@ app.configure(configuration());
 
 // plugins
 app.configure(socketio(channels));
+
+// services
+app.configure(services);
 
 // error handling
 app.use(express.errorHandler({ logger }));

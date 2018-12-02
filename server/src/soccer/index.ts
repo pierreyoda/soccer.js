@@ -5,9 +5,11 @@ export { default as Room } from "./room";
 
 export class Player extends Client {
   constructor(
-    protected socket: Socket,
-    protected name: string,
+    socket: Socket,
+    protected _name: string,
   ) {
     super(socket);
   }
+
+  get name(): string { return this._name; }
 }

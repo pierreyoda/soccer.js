@@ -1,8 +1,7 @@
 <template>
-  <div class="w-full max-w-xs">
-    <form class="bg-grey-darkest shadow-md rounded px-8 py-6 mb-4"
-      @submit.prevent="submit">
-      <h2 class="text-white">
+  <div class="w-full max-w-xs mx-auto">
+    <form class="form-card" @submit.prevent="submit">
+      <h2 class="form-title">
         Choose your nickname
       </h2>
       <div class="mb-4">
@@ -10,14 +9,13 @@
           Nickname:
         </label>
         <input id="nickname" v-model="nickname" @keyup.enter="submit"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline">
+          class="form-input">
         <span v-if="nickname.trim() && error" class="text-sm text-red-dark">
           Invalid nickname.
         </span>
       </div>
       <div>
-        <button type="submit" :disabled="!nicknameValid"
-          class="py-2 px-4 bg-blue hover:bg-blue-dark text-white font-bold rounded focus:outline-none focus:shadow-outline">
+        <button type="submit" :disabled="!nicknameValid" class="form-btn">
           Ok
         </button>
       </div>
@@ -50,7 +48,3 @@ export default class Login extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

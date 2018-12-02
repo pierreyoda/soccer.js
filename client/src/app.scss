@@ -35,6 +35,41 @@
   * @import "components/buttons";
   * @import "components/forms";
   */
+.form-card {
+  @apply bg-grey-darkest shadow-md rounded px-8 py-6 mb-4;
+}
+.form-title {
+  @apply text-white text-lg;
+}
+.form-input {
+  @apply shadow appearance-none border rounded w-full py-2 px-3
+    text-grey-darker leading-tight;
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+}
+.form-btn {
+  @apply py-2 px-4 bg-blue text-white font-bold rounded;
+  &:hover {
+    @apply bg-blue-dark;
+  }
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+}
+.form-btn-cancel {
+  @apply py-2 px-4 text-white font-bold;
+  &:hover {
+    @apply underline;
+  }
+}
+
+.dashboard-btn {
+  @apply py-2 px-4 bg-blue-dark text-white font-bold rounded;
+  &:hover {
+    @apply bg-blue-darkest;
+  }
+}
 
  /**
   * This injects all of Tailwind's utility classes, generated based on your

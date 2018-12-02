@@ -1,15 +1,18 @@
 {
   "name": "soccerjs",
   "version": "0.0.0",
-  "description": "Open-source Haxball clone",
+  "description": "Open-source Haxball clone in Typescript",
   "author": "pierreyoda <pierreyoda@users.noreply.github.com>",
   "license": "MIT",
   "private": true,
   "workspaces": [
+    "core",
     "client",
     "server"
   ],
   "scripts": {
+    "lint:server": "tslint -c tslint.json './server/**/*.ts'",
+    "lint": "yarn lint:server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
