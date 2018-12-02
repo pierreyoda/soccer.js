@@ -1,14 +1,19 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div id="app" class="text-center">
+    <div class="bg-black">
+      <span class="bg-blue-darker font-semibold">
+        <router-link to="/" class="text-white">Soccer.js</router-link>
+      </span>
+      <router-link to="/play" class="text-white">Play</router-link>
+      <router-link to="/about" class="text-white">About</router-link>
     </div>
     <router-view/>
   </div>
 </template>
 
 <style lang="scss">
+@import "app";
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
