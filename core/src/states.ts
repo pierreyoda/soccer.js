@@ -1,9 +1,18 @@
 import * as fossilDelta from "fossil-delta";
 
-import { ServerChatMessage } from "./payloads";
+import {
+  GameRoomStatus,
+  ServerChatMessage,
+} from "./payloads";
 
 export interface GameRoomState {
   messages: ServerChatMessage[];
+}
+
+export interface LobbyRoomState {
+  list: GameRoomStatus[];
+  totalPlayers: number;
+  totalRooms: number;
 }
 
 export type BinaryPatch = number[];

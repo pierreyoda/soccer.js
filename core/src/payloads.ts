@@ -5,7 +5,8 @@ export enum RoomDataType {
 }
 export type ChatMessageType = "server" | "player";
 
-export interface RoomStatus {
+export interface GameRoomStatus {
+  id: string;
   name: string;
   players: number;
   maxPlayers: number;
@@ -47,10 +48,4 @@ export interface ServerChatMessage {
   type: ChatMessageType;
   playerName?: string;
   text: string;
-}
-
-export interface ServerRoomIndex {
-  list: RoomStatus[];
-  totalPlayers: number;
-  totalRooms: number;
 }

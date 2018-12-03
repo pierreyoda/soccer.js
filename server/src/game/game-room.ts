@@ -53,10 +53,12 @@ export default class GameRoom extends Room<GameRoomState, GameRoomMetadata> {
   }
 
   protected async clientHasJoined(client: Client): Promise<void> {
+    client.gameRoomId = this.id;
     this.messageFromServer(`${client.nickname} has joined.`);
   }
   protected async clientHasLeft(client: Client): Promise<void> {
-    // TODO:
+    client.gameRoomId = undefined;
+    this.messageFromServer(`${client.nickname} has left.`);
   }
   protected async disposeRoom(): Promise<void> {
     // TODO: notify rooms service

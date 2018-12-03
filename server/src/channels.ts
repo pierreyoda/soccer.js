@@ -8,20 +8,33 @@ import {
   ClientJoinRoom,
 } from "../../core/src/payloads"; // FIXME: yarn workspace path?
 import logger from "./logger";
-import { GameRoom, Client } from "./game";
+import { GameRoom, Client, LobbyRoom } from "./game";
 import app from "./app";
 
 const channels = (io: SocketIO.Server) => {
-  let totalPlayers = 0;
+  // TODO: refactor
+  const lobby = new LobbyRoom();
+  const rooms = app.service("rooms");
+
+  rooms.on("created", (room: GameRoom) => {
+    lobby.roomCreated(room);
+  });
+  rooms.on("removed", (room: GameRoom) => {
+    lobby.roomDeleted(room);
+  })
 
   io.on("connection", (socket: Socket) => {
     logger.info(`Connection established with client ID = ${socket.id}.`);
-    ++totalPlayers;
+    lobby.playerConnected();
     let player: Client;
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       logger.info(`Connection terminated with client ID = ${socket.id}.`);
-      --totalPlayers;
+      if (player && player.gameRoomId) {
+        const room: GameRoom = await rooms.get(player.gameRoomId);
+        room.clientLeave(player);
+      }
+      lobby.playerDisconnected();
     });
 
     socket.on(
@@ -29,6 +42,9 @@ const channels = (io: SocketIO.Server) => {
       (data: ClientLogin, ack: (data: ServerLoginAck) => void) => {
         logger.info(`Player logged in as "${data.nickname}".`);
         player = new Client(socket, data.nickname);
+        if (!lobby.clientRequestJoin(player)) {
+          throw new Error("Channel login: join lobby room.")
+        }
         ack({
           socketId: socket.id,
         });
@@ -41,9 +57,11 @@ const channels = (io: SocketIO.Server) => {
         if (!player) {
           throw new Error("Channel room_create: not logged in.");
         }
-        const room: GameRoom = await app.service("rooms").create(data);
-        logger.info(`Created room "${room.name}" with ID "${room.id}".`);
-        room.clientRequestJoin(player);
+        const room: GameRoom = await rooms.create(data);
+        lobby.clientLeave(player);
+        if (!room.clientRequestJoin(player)) {
+          throw new Error("Channel room_create: cannot join.");
+        }
         ack({
           roomId: room.id,
         });
@@ -56,7 +74,8 @@ const channels = (io: SocketIO.Server) => {
         if (!player) {
           throw new Error("Channel room_join: not logged in.");
         }
-        const room: GameRoom = await app.service("rooms").get(data.roomId);
+        const room: GameRoom = await rooms.get(data.roomId);
+        lobby.clientLeave(player);
         if (!room.clientRequestJoin(player)) {
           throw new Error("Channel room_join: cannot join.");
         }

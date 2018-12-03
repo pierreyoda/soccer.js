@@ -72,7 +72,6 @@ export default abstract class Room<State, Metadata> {
       return false;
     }
 
-    client.socket.leaveAll();
     client.socket.join(this.id);
     this.clients.push(client);
     logger.info(`Room "${this.id}": player "${client.nickname}" has joined`);
@@ -82,6 +81,13 @@ export default abstract class Room<State, Metadata> {
     this.sendToClient(client, data);
 
     return true;
+  }
+
+  public async clientLeave(client: Client): Promise<void> {
+    if (client.socket.connected) {
+      client.socket.leave(this.id);
+    }
+    await this.clientHasLeft(client);
   }
 
   protected abstract async clientHasJoined(client: Client): Promise<void>;
