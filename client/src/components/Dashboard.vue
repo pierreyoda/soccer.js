@@ -4,6 +4,7 @@
     <button @click="$emit('create-room')" class="dashboard-btn">
       Create room
     </button>
+    <rooms-list></rooms-list>
   </div>
 </template>
 
@@ -14,6 +15,12 @@
  */
 import { Component, Vue } from "vue-property-decorator";
 
-@Component
+import RoomsList from "./RoomsList.vue";
+
+@Component({
+  components: {
+    RoomsList,
+  }
+})
 export default class Dashboard extends Vue {}
 </script>

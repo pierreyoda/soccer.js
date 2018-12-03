@@ -1,72 +1,121 @@
-import { Player } from ".";
-import { ServerChatMessage } from "../../../core/src/payloads";
+import * as NanoTimer from "nanotimer";
+import * as msgpack from "msgpack-lite";
+
+// FIXME: yarn workspace import
+import { RoomDataType } from "../../../core/src/payloads";
+import { createBinaryPatch } from "../../../core/src/states";
+import Client from "./client";
 import logger from "../logger";
 
-export interface RoomState {
-  messages: ServerChatMessage[];
-}
+/**
+ * Time in milliseconds between clients state synchronizations.
+ */
+const SYNCHRONIZATION_RATE = 1000 / 20;
 
 /**
- * A Room defines a Soccer.js gaming session with real-time chat
- * and gameplay between its connected clients.
+ * Time in milliseconds between state updates.
  */
-export default class Room {
-  protected players: Player[] = [];
-  protected state: RoomState = {
-    messages: [],
-  };
+const UPDATE_RATE = 1000 / 60;
+
+/**
+ * A Room allows sharing a common state in realtime with remote clients.
+ *
+ * The Room's state is sent fully on first connection, then only patches are sent.
+ * All room data is shared in binary (Buffer) with the MessagePack protocol.
+ */
+export default abstract class Room<State, Metadata> {
+  protected clients: Client[] = [];
+  protected _state: State;
+
+  /** Latest state shared between all clients. */
+  private _previousState: State;
+  private _previousStateEncoded: Buffer;
+  private _updateTimer = new NanoTimer();
+  private _synchronizationTimer = new NanoTimer();
 
   constructor(
-    protected _id: string,
-    protected _name: string,
-    protected _maxClients: number,
-    protected _showInList: boolean,
-    protected _password?: string,
-  ) {}
+    initialState: State,
+    protected _metadata: Metadata,
+    private _id: string,
+    private _maxClients: number | null,
+  ) {
+    this._state = initialState;
+    this._updateTimer.setInterval(this.synchronizeClients.bind(this), [], `${SYNCHRONIZATION_RATE}m`);
 
+    this._previousState = initialState;
+    this._previousStateEncoded = msgpack.encode(this._previousState);
+  }
+
+  /**
+   * The identifier of the Room, used by socket.io. Must be unique.
+   */
   get id(): string { return this._id; }
-  get name(): string { return this._name; }
-  get maxClients(): number { return this._maxClients; }
-  get showInList(): boolean { return this._showInList; }
-  get hasPassword(): boolean { return !!this._password; }
 
-  public clientRequestJoin(player: Player): boolean {
-    if (this.players.length + 1 <= this.maxClients) {
-      this.clientHasJoined(player);
-      return true;
+  /**
+   * The maximum number of clients (null if no limit).
+   */
+  get maxClients(): number | null { return this._maxClients; }
+
+  public sendToClient(client: Client, data: any) {
+    const binaryData = this.encodeData(data);
+    client.socket.emit("room_data", binaryData);
+  }
+
+  public broadcastToClients(data: any) {
+    if (this.clients.length === 0) { return; }
+    const binaryData = this.encodeData(data);
+    this.clients[0].socket.to(this.id).emit("room_data", binaryData);
+  }
+
+  public async clientRequestJoin(client: Client): Promise<boolean> {
+    if (!!this.maxClients && this.clients.length + 1 > this.maxClients) {
+      return false;
     }
-    return false;
+
+    client.socket.leaveAll();
+    client.socket.join(this.id);
+    this.clients.push(client);
+    logger.info(`Room "${this.id}": player "${client.nickname}" has joined`);
+    await this.clientHasJoined(client);
+
+    const data = msgpack.encode([RoomDataType.ROOM_STATE_FULL, this._state]);
+    this.sendToClient(client, data);
+
+    return true;
   }
 
-  public messageFromPlayer(clientId: string, message: string) {
-    const player = this.players.find(p => p.socket.id === clientId);
-    if (!player) {
-      throw new Error(`Room ID = "${this.id}": cannot find client with ID = "${clientId}."`);
-    }
-    this.state.messages.push({
-      type: "player",
-      playerName: player.name,
-      text: message,
-    });
+  protected abstract async clientHasJoined(client: Client): Promise<void>;
+  protected abstract async clientHasLeft(client: Client): Promise<void>;
+  protected abstract async disposeRoom(): Promise<void>;
+
+  protected setState(state: State) {
+    this._previousState = this._state;
+    this._previousStateEncoded = msgpack.encode(this._previousState);
+    this._state = state;
   }
 
-  protected clientHasJoined(player: Player) {
-    player.socket.leaveAll();
-    player.socket.join(`room-${this.id}`);
-    this.players.push(player);
-    logger.info(`Room "${this.id}": player "${player.name}" has joined`);
-    this.messageFromServer(`${player.name} has joined.`)
-  }
-  protected clientHasLeft() {
-    // TODO
+  protected synchronizeClients() {
+    const stateEncoded = msgpack.encode(this._state);
+    if (stateEncoded.equals(this._previousStateEncoded)) { return; }
+
+    const patch = createBinaryPatch(this._previousStateEncoded, stateEncoded);
+    this._previousState = this._state;
+    this._previousStateEncoded = stateEncoded;
+
+    const data = msgpack.encode([RoomDataType.ROOM_STATE_PATCH, patch]);
+    this.broadcastToClients(data);
   }
 
-  protected messageFromServer(message: string) {
-    this.state.messages.push({
-      type: "server",
-      text: message,
-    });
+  private encodeData(data: any): Buffer {
+    return Buffer.isBuffer(data)
+      ? data
+      : msgpack.encode([RoomDataType.ROOM_DATA, data]);
   }
 
-  protected destroy() {}
+  private async dispose() {
+    this._updateTimer.clearInterval();
+    this._synchronizationTimer.clearInterval();
+    // TODO: disconnect all clients
+    await this.disposeRoom();
+  }
 }

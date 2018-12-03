@@ -1,4 +1,16 @@
+export enum RoomDataType {
+  ROOM_DATA = 1,
+  ROOM_STATE_FULL = 2,
+  ROOM_STATE_PATCH = 3,
+}
 export type ChatMessageType = "server" | "player";
+
+export interface RoomStatus {
+  name: string;
+  players: number;
+  maxPlayers: number;
+  hasPassword: boolean;
+}
 
 // Communication payloads from the client to the server.
 
@@ -35,4 +47,10 @@ export interface ServerChatMessage {
   type: ChatMessageType;
   playerName?: string;
   text: string;
+}
+
+export interface ServerRoomIndex {
+  list: RoomStatus[];
+  totalPlayers: number;
+  totalRooms: number;
 }

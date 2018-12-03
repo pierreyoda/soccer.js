@@ -6,7 +6,9 @@
     "build": "tsc"
   },
   "devDependencies": {
+    "@types/fossil-delta": "^1.0.0"
   },
   "dependencies": {
+    "fossil-delta": "^1.0.2"
   }
 }

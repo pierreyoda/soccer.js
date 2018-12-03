@@ -1,8 +1,8 @@
 import { ClientCreateRoom } from "../../../../core/src/payloads";
-import { Room } from "../../game";
+import { GameRoom } from "../../game";
 
 export default class RoomsService {
-  protected rooms: Room[] = [];
+  protected rooms: GameRoom[] = [];
 
   public async find(params: any) {
     return this.rooms;
@@ -16,7 +16,7 @@ export default class RoomsService {
     return room;
   }
 
-  public async create(data: ClientCreateRoom, params: any): Promise<Room> {
+  public async create(data: ClientCreateRoom, params: any): Promise<GameRoom> {
     const randomId = (): string =>
       Math.random()
         .toString(36)
@@ -26,7 +26,7 @@ export default class RoomsService {
       id = randomId();
     }
 
-    const room = new Room(
+    const room = new GameRoom(
       id,
       data.name,
       data.maxPlayers,

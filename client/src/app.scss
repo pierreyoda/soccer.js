@@ -35,8 +35,11 @@
   * @import "components/buttons";
   * @import "components/forms";
   */
-.form-card {
+.dashboard-card {
   @apply bg-grey-darkest shadow-md rounded px-8 py-6 mb-4;
+}
+.form-card {
+  @apply dashboard-card;
 }
 .form-title {
   @apply text-white text-lg;

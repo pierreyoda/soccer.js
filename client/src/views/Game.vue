@@ -2,7 +2,7 @@
   <div v-if="loggedIn">
     <template v-if="!!roomId">
       <game-canvas></game-canvas>
-      <chat></chat>
+      <chat :messages="messages"></chat>
     </template>
     <template v-else>
       <template v-if="dashboardTab === 'main'">
@@ -25,6 +25,7 @@
 </template>
 
 <script lang="ts">
+import * as msgpack from "msgpack-lite";
 import { Application } from "@feathersjs/feathers";
 import { Component, Vue } from "vue-property-decorator";
 
@@ -34,7 +35,9 @@ import Dashboard from "@/components/Dashboard.vue";
 import RoomCreate from "@/components/RoomCreate.vue";
 import Chat from "@/components/Chat.vue";
 import GameCanvas from "@/components/GameCanvas.vue";
-import { ClientCreateRoom, ServerCreateRoomAck, ClientJoinRoom } from "../../../core/src/payloads";
+// FIXME: shared module path
+import { ClientCreateRoom, ServerCreateRoomAck, ClientJoinRoom, RoomDataType, ServerChatMessage } from "../../../core/src/payloads";
+import { GameRoomState, applyBinaryPatch } from "../../../core/src/main";
 
 type DashboardTab = "main" | "create-room";
 
@@ -53,6 +56,9 @@ export default class Game extends Vue {
   private loggedIn = false;
   private roomId: string | null = null;
   private dashboardTab: DashboardTab = "main";
+  private gameRoomState: GameRoomState | null = null;
+  private messages: ServerChatMessage[] = [];
+  private gameRoomStateEncoded = new Uint8Array();
 
   mounted() {
     this.client = gameClient;
@@ -62,9 +68,25 @@ export default class Game extends Vue {
     gameSocket.on("chat_message", (data: any) => {
       console.log("message", data.text);
     });
+    gameSocket.on("room_data", (binaryData: Buffer) => {
+      const data = msgpack.decode(new Uint8Array(binaryData));
+      const type = data[0] as RoomDataType;
+      switch (type) {
+        case RoomDataType.ROOM_STATE_FULL:
+          this.gameRoomState = data[1];
+          this.gameRoomStateEncoded = msgpack.encode(this.gameRoomState);
+        case RoomDataType.ROOM_STATE_PATCH:
+          const patch = data[1];
+          this.gameRoomStateEncoded = applyBinaryPatch(this.gameRoomStateEncoded, patch);
+          this.gameRoomState = msgpack.decode(this.gameRoomStateEncoded);
+      }
+      this.messages = this.gameRoomState!.messages;
+    });
 
     // join by URL
-    this.roomId = this.$route.query.room.toString();
+    this.roomId = this.$route.query.room
+      ? this.$route.query.room.toString()
+      : null;
   }
 
   authenticate(nickname: string) {
