@@ -1,9 +1,11 @@
 <template>
   <div v-if="loggedIn">
-    <template v-if="!!roomId">
+    <div v-if="!!roomId" class="flex flex-col">
       <game-canvas></game-canvas>
-      <chat :messages="messages"></chat>
-    </template>
+      <chat class="flex-grow" :messages="messages"
+        @send-message="(text) => sendMessage(text)">
+      </chat>
+    </div>
     <template v-else>
       <template v-if="dashboardTab === 'main'">
         <dashboard @create-room="dashboardTab = 'create-room'"></dashboard>
@@ -64,9 +66,6 @@ export default class Game extends Vue {
     this.client = gameClient;
     gameSocket.on("disconnect", () => {
       this.loggedIn = false;
-    })
-    gameSocket.on("chat_message", (data: any) => {
-      console.log("message", data.text);
     });
     gameSocket.on("room_data", (binaryData: Buffer) => {
       const data = msgpack.decode(new Uint8Array(binaryData));
@@ -112,6 +111,10 @@ export default class Game extends Vue {
     gameSocket.emit("room_create", data, (ackData: ServerCreateRoomAck) => {
       this.roomId = ackData.roomId;
     });
+  }
+
+  sendMessage(text: string) {
+    gameSocket.emit("chat_message", text);
   }
 }
 </script>

@@ -81,6 +81,17 @@ const channels = (io: SocketIO.Server) => {
         }
       },
     );
+
+    socket.on("chat_message", async (text: string) => {
+      if (!player) {
+        throw new Error("Channel chat_message: not logged in.");
+      }
+      if (!player.gameRoomId) {
+        throw new Error("Channel chat_message: not in game room.");
+      }
+      const room: GameRoom = await rooms.get(player.gameRoomId);
+      room.messageFromPlayer(player.socket.id, text);
+    });
   });
 };
 
