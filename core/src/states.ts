@@ -8,12 +8,22 @@ import {
 export interface GameRoomState {
   messages: ServerChatMessage[];
 }
+export const gameRoomInitialState = {
+  messages: [],
+};
 
 export interface LobbyRoomState {
-  list: GameRoomStatus[];
+  rooms: {
+    [roomId: string]: GameRoomStatus;
+  };
   totalPlayers: number;
   totalRooms: number;
 }
+export const lobbyRoomInitialState: LobbyRoomState = {
+  rooms: {},
+  totalPlayers: 0,
+  totalRooms: 0,
+};
 
 export type BinaryPatch = number[];
 

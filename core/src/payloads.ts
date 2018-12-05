@@ -6,10 +6,9 @@ export enum RoomDataType {
 export type ChatMessageType = "server" | "player";
 
 export interface GameRoomStatus {
-  id: string;
   name: string;
   players: number;
-  maxPlayers: number;
+  maxPlayers: number | null;
   hasPassword: boolean;
 }
 

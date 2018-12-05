@@ -70,7 +70,7 @@ const channels = (io: SocketIO.Server) => {
 
     socket.on(
       "room_join",
-      async (data: ClientJoinRoom) => {
+      async (data: ClientJoinRoom, ack: () => void) => {
         if (!player) {
           throw new Error("Channel room_join: not logged in.");
         }
@@ -79,6 +79,7 @@ const channels = (io: SocketIO.Server) => {
         if (!room.clientRequestJoin(player)) {
           throw new Error("Channel room_join: cannot join.");
         }
+        ack();
       },
     );
 

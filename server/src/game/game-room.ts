@@ -1,4 +1,4 @@
-import { GameRoomState } from "../../../core/src/states"; // FIXME:
+import { GameRoomState, gameRoomInitialState } from "../../../core/src/states"; // FIXME:
 import Client from "./client";
 import Room from "./room";
 
@@ -21,7 +21,7 @@ export default class GameRoom extends Room<GameRoomState, GameRoomMetadata> {
     password?: string,
   ) {
     super({
-      messages: [],
+      ...gameRoomInitialState,
     }, {
       name,
       showInList,

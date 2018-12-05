@@ -1,3 +1,4 @@
+import { EventEmitter } from "events";
 import * as NanoTimer from "nanotimer";
 import * as msgpack from "msgpack-lite";
 
@@ -23,8 +24,8 @@ const UPDATE_RATE = 1000 / 60;
  * The Room's state is sent fully on first connection, then only patches are sent.
  * All room data is shared in binary (Buffer) with the MessagePack protocol.
  */
-export default abstract class Room<State, Metadata> {
-  protected clients: Client[] = [];
+export default abstract class Room<State, Metadata> extends EventEmitter {
+  public clients: Client[] = [];
   protected _state: State;
 
   /** Latest state shared between all clients. */
@@ -39,6 +40,7 @@ export default abstract class Room<State, Metadata> {
     private _id: string,
     private _maxClients: number | null,
   ) {
+    super();
     this._state = initialState;
     this._updateTimer.setInterval(this.synchronizeClients.bind(this), [], `${SYNCHRONIZATION_RATE}m`);
 
@@ -58,13 +60,13 @@ export default abstract class Room<State, Metadata> {
 
   public sendToClient(client: Client, data: any) {
     const binaryData = this.encodeData(data);
-    client.socket.emit("room_data", binaryData);
+    client.socket.emit("room_data", this.id, binaryData);
   }
 
   public broadcastToClients(data: any) {
     if (this.clients.length === 0) { return; }
     const binaryData = this.encodeData(data);
-    this.clients[0].socket.to(this.id).emit("room_data", binaryData);
+    this.clients[0].socket.in(this.id).emit("room_data", this.id, binaryData);
   }
 
   public async clientRequestJoin(client: Client): Promise<boolean> {
@@ -76,6 +78,7 @@ export default abstract class Room<State, Metadata> {
     this.clients.push(client);
     logger.info(`Room "${this.id}": player "${client.nickname}" has joined`);
     await this.clientHasJoined(client);
+    this.emit("client_join");
 
     const data = msgpack.encode([RoomDataType.ROOM_STATE_FULL, this._state]);
     this.sendToClient(client, data);
@@ -88,6 +91,7 @@ export default abstract class Room<State, Metadata> {
       client.socket.leave(this.id);
     }
     await this.clientHasLeft(client);
+    this.emit("client_leave");
   }
 
   protected abstract async clientHasJoined(client: Client): Promise<void>;

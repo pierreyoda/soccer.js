@@ -1,4 +1,4 @@
-import { LobbyRoomState } from "../../../core/src/states"; // FIXME:
+import { LobbyRoomState, lobbyRoomInitialState } from "../../../core/src/states"; // FIXME:
 import Client from "./client";
 import Room from "./room";
 import GameRoom from "./game-room";
@@ -9,11 +9,7 @@ import logger from "../logger";
  */
 export default class LobbyRoom extends Room<LobbyRoomState, {}> {
   constructor() {
-    super({
-      list: [],
-      totalPlayers: 0,
-      totalRooms: 0,
-    }, {}, "_lobby", null);
+    super({ ...lobbyRoomInitialState }, {}, "_lobby", null);
   }
 
   public playerConnected() {
@@ -24,13 +20,24 @@ export default class LobbyRoom extends Room<LobbyRoomState, {}> {
   }
 
   public roomCreated(room: GameRoom) {
-    // TODO: update index
     ++this._state.totalRooms;
+    this._state.rooms[room.id] = {
+      name: room.name,
+      players: room.clients.length,
+      maxPlayers: room.maxClients,
+      hasPassword: room.hasPassword,
+    };
+    room.on("client_join", () => {
+      ++this._state.rooms[room.id].players;
+    });
+    room.on("client_leave", () => {
+      --this._state.rooms[room.id].players;
+    });
     logger.info(`Created room "${room.name}" with ID "${room.id}".`);
   }
   public roomDeleted(room: GameRoom) {
-    // TODO: update index
     --this._state.totalRooms;
+    delete this._state.rooms[room.id];
     logger.info(`Deleted room "${room.name}" with ID "${room.id}".`);
   }
 
