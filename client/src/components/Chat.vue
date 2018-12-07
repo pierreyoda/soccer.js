@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from "vue-property-decorator";
-import { ServerChatMessage } from "../../../core/src/main";
+import { ServerChatMessage } from "../../../core/src/payloads";
 
 /**
  * Output events:

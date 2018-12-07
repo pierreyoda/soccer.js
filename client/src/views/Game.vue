@@ -13,7 +13,10 @@
     <template v-else>
       {{ nickname }}
       <template v-if="dashboardTab === 'main'">
-        <dashboard @create-room="dashboardTab = 'create-room'"></dashboard>
+        <dashboard :lobby-state="lobbyRoomState"
+          @create-room="dashboardTab = 'create-room'"
+          @join-room="(data) => joinRoom(data)">
+        </dashboard>
       </template>
       <template v-else-if="dashboardTab === 'create-room'">
         <room-create
@@ -40,8 +43,17 @@ import RoomCreate from "@/components/RoomCreate.vue";
 import Chat from "@/components/Chat.vue";
 import GameCanvas from "@/components/GameCanvas.vue";
 // FIXME: shared module path
-import { ClientCreateRoom, ServerCreateRoomAck, ClientJoinRoom, RoomDataType, ServerChatMessage } from "../../../core/src/payloads";
-import { GameRoomState, applyBinaryPatch, LobbyRoomState } from "../../../core/src/main";
+import {
+  ClientCreateRoom,
+  ServerCreateRoomAck,
+  ClientJoinRoom,
+  ServerChatMessage,
+} from "../../../core/src/payloads";
+import {
+  GameRoomState,
+  LobbyRoomState,
+  lobbyRoomInitialState,
+} from "../../../core/src/states";
 
 type DashboardTab = "main" | "create-room";
 
@@ -57,10 +69,12 @@ type DashboardTab = "main" | "create-room";
 export default class Game extends Vue {
   private serverConnection!: ClientServerConnection;
   private waitingForServer = false;
+  private serverError = false;
   private loggedIn = false;
   private roomId: string | null = null;
   private dashboardTab: DashboardTab = "main";
   private nickname = "";
+  private lobbyRoomState: LobbyRoomState = lobbyRoomInitialState;
   private gameRoomState: GameRoomState | null = null;
   private messages: ServerChatMessage[] = [];
 
@@ -79,15 +93,15 @@ export default class Game extends Vue {
 
   onDisconnection() {
     console.log("Disconnected from server.");
-    this.loggedIn = false;
+    this.loggedIn = this.waitingForServer = false;
   }
 
   onLobbyStateUpdate(state: LobbyRoomState) {
-    console.log("lobby state", state);
+    this.lobbyRoomState = state;
   }
 
   onGameStateUpdate(state: GameRoomState) {
-    this.gameRoomState = {...state};
+    this.gameRoomState = { ...state };
     this.messages = this.gameRoomState.messages;
   }
 
@@ -96,9 +110,19 @@ export default class Game extends Vue {
     this.nickname = nickname;
     this.waitingForServer = true;
     // TODO: error handling
-    this.loggedIn = await this.serverConnection.login(nickname);
-    this.waitingForServer = false;
-    if (this.loggedIn && this.roomId) {
+    try {
+      await this.serverConnection.login(nickname);
+      this.loggedIn = true;
+    } catch (error) {
+      this.serverError = true;
+      console.error(error);
+    } finally {
+      this.waitingForServer = false;
+    }
+    if (!this.loggedIn) {
+      return;
+    }
+    if (this.roomId) {
       await this.joinRoom({
         roomId: this.roomId,
       });
@@ -109,19 +133,27 @@ export default class Game extends Vue {
 
   async joinRoom(data: ClientJoinRoom) {
     this.waitingForServer = true;
-    const success = await this.serverConnection.joinGameRoom(data);
-    if (!success) {
-      // TODO: error handling
-      console.error(`Cannot join game room "${data.roomId}".`);
+    try {
+      await this.serverConnection.joinGameRoom(data);
+      this.roomId = data.roomId;
+    } catch (error) {
+      this.serverError = true;
+      console.error(error);
+    } finally {
+      this.waitingForServer = false;
     }
-    this.waitingForServer = false;
   }
 
   async createRoom(data: ClientCreateRoom) {
     this.waitingForServer = true;
-    // TODO: error handling
-    this.roomId = await this.serverConnection.createGameRoom(data);
-    this.waitingForServer = false;
+    try {
+      this.roomId = await this.serverConnection.createGameRoom(data);
+    } catch (error) {
+      this.serverError = true;
+      console.error(error);
+    } finally {
+      this.waitingForServer = false;
+    }
   }
 
   sendMessage(text: string) {

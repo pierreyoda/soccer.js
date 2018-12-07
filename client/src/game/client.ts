@@ -53,7 +53,6 @@ export class ClientServerConnection {
         return;
       }
       const data = msgpack.decode(new Uint8Array(binaryData));
-      console.log("data", data);
       const type = data[0] as RoomDataType;
       switch (type) {
         case RoomDataType.ROOM_STATE_FULL:
@@ -71,31 +70,31 @@ export class ClientServerConnection {
     });
   }
 
-  public async login(nickname: string): Promise<boolean> {
-    const connection = new Promise<boolean>((resolve) => {
+  public async login(nickname: string): Promise<void> {
+    const connection = new Promise<void>((resolve) => {
       const payload: ClientLogin = {
         nickname,
       };
-      socket.emit("login", payload, () => resolve(true));
+      socket.emit("login", payload, () => resolve());
     });
     return Promise.race([
       connection,
-      this.serverTimeOut<boolean>(5000, "Server timed out on login."),
+      this.serverTimeOut<void>(5000, "Server timed out on login."),
     ]);
   }
 
-  public async joinGameRoom(data: ClientJoinRoom): Promise<boolean> {
-    const join = new Promise<boolean>((resolve) => {
+  public async joinGameRoom(data: ClientJoinRoom): Promise<void> {
+    const join = new Promise<void>((resolve) => {
       socket.emit("room_join", data, () => {
         this._clientRooms[data.roomId] = new RoomClient<GameRoomState>({
           ...gameRoomInitialState,
         });
-        resolve(true);
+        resolve();
       });
     });
     return Promise.race([
       join,
-      this.serverTimeOut<boolean>(5000, "Server timed out on room join."),
+      this.serverTimeOut<void>(5000, "Server timed out on room join."),
     ]);
   }
 
