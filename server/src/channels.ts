@@ -43,7 +43,7 @@ const channels = (io: SocketIO.Server) => {
         logger.info(`Player logged in as "${data.nickname}".`);
         player = new Client(socket, data.nickname);
         if (!lobby.clientRequestJoin(player)) {
-          throw new Error("Channel login: join lobby room.")
+          throw new Error("Channel login: join lobby room.");
         }
         ack({
           socketId: socket.id,

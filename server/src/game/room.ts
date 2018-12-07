@@ -66,7 +66,7 @@ export default abstract class Room<State, Metadata> extends EventEmitter {
   public broadcastToClients(data: any) {
     if (this.clients.length === 0) { return; }
     const binaryData = this.encodeData(data);
-    this.clients[0].socket.in(this.id).emit("room_data", this.id, binaryData);
+    this.clients[0].socket.nsp.to(this.id).emit("room_data", this.id, binaryData);
   }
 
   public async clientRequestJoin(client: Client): Promise<boolean> {
