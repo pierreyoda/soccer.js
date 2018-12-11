@@ -90,6 +90,7 @@ export default abstract class Room<State, Metadata> extends EventEmitter {
     if (client.socket.connected) {
       client.socket.leave(this.id);
     }
+    this.clients = this.clients.filter(c => c.socket.id !== client.socket.id);
     await this.clientHasLeft(client);
     this.emit("client_leave");
   }
