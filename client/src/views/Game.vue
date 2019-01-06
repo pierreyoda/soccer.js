@@ -4,18 +4,17 @@
   </div>
   <div v-else-if="loggedIn">
     <div v-if="!!roomId" class="flex flex-col">
-      {{ roomId }}
       <game-canvas :client-id="clientId"></game-canvas>
       <chat class="flex-grow" :messages="messages"
         @send-message="(text) => sendMessage(text)">
       </chat>
     </div>
     <template v-else>
-      {{ nickname }}
       <template v-if="dashboardTab === 'main'">
         <dashboard :lobby-state="lobbyRoomState"
           @create-room="dashboardTab = 'create-room'"
-          @join-room="(data) => joinRoom(data)">
+          @join-room="(data) => joinRoom(data)"
+          @change-nickname="dashboardTab= 'change-nickname'">
         </dashboard>
       </template>
       <template v-else-if="dashboardTab === 'create-room'">
@@ -23,6 +22,12 @@
           @create-room="(data) => createRoom(data)"
           @cancel="dashboardTab = 'main'">
         </room-create>
+      </template>
+      <template v-else-if="dashboardTab === 'change-nickname'">
+        <nickname-picker :current-nickname="nickname"
+          @picked="nickname => changeNickname(nickname)"
+          @cancel="dashboardTab = 'main'">
+        </nickname-picker>
       </template>
     </template>
   </div>
@@ -40,6 +45,7 @@ import { ClientServerConnection } from "../game";
 import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import RoomCreate from "@/components/RoomCreate.vue";
+import NicknamePicker from "@/components/NicknamePicker.vue";
 import Chat from "@/components/Chat.vue";
 import GameCanvas from "@/components/GameCanvas.vue";
 // FIXME: shared module path
@@ -55,13 +61,14 @@ import {
   lobbyRoomInitialState,
 } from "../../../core/src/states";
 
-type DashboardTab = "main" | "create-room";
+type DashboardTab = "main" | "create-room" | "change-nickname";
 
 @Component({
   components: {
     Login,
     Dashboard,
     RoomCreate,
+    NicknamePicker,
     Chat,
     GameCanvas,
   },
@@ -154,6 +161,20 @@ export default class Game extends Vue {
       console.error(error);
     } finally {
       this.waitingForServer = false;
+    }
+  }
+
+  async changeNickname(nickname: string) {
+    this.waitingForServer = true;
+    try {
+      await this.serverConnection.changeNickname(nickname);
+      this.nickname = nickname;
+    } catch (error) {
+      this.serverError = true;
+      console.error(error);
+    } finally {
+      this.waitingForServer = false;
+      this.dashboardTab = "main";
     }
   }
 

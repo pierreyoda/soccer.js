@@ -1,8 +1,8 @@
 import Clock from "@gamestdio/clock";
-import { Engine, World, Bodies, Body } from "matter-js";
+import { Engine, World, Body } from "matter-js";
 
 import Stadium from "./stadium";
-import { PlayerPawnAction, PawnMoveDirection } from "../payloads";
+import { PlayerPawnAction } from "../payloads";
 import { PlayerPawn, Ball, createBallBody, pawnMovementForce, createPawnBody } from "./entities";
 
 export interface GameOptions {

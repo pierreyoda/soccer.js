@@ -12,6 +12,11 @@
       </div>
     </div>
     <div class="overflow-y-auto rooms-list">
+      <div v-if="rooms.length === 0" class="py-6">
+        <span class="text-white text-sm text-center">
+          No room is currently available.
+        </span>
+      </div>
       <div class="rooms-list-item flex"
         :class="{ selected: id === selectedRoomId }"
         v-for="[id, room] in rooms" :key="id"

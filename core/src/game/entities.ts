@@ -21,7 +21,7 @@ export const createPawnBody = (x: number, y: number, radius: number): Body =>
     },
   });
 
-const pawnMoveForceFactor = 0.01 * 1e6;
+const pawnMoveForceFactor = 0.01;
 const pawnMoveForceUp: Vector = {
   x: 0,
   y: pawnMoveForceFactor,

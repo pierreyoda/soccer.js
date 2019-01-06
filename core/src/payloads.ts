@@ -24,6 +24,10 @@ export interface ClientLogin {
   nickname: string;
 }
 
+export interface ClientChangeNickname {
+  nickname: string;
+}
+
 export interface ClientCreateRoom {
   name: string;
   password?: string;

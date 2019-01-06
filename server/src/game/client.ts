@@ -9,4 +9,5 @@ export default class Client {
   ) {}
 
   get nickname(): string { return this._nickname; }
+  set nickname(value: string) { this._nickname = value; }
 }

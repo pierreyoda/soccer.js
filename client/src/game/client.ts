@@ -10,6 +10,7 @@ import {
   ClientLogin,
   ClientJoinRoom,
   ServerLoginAck,
+  ClientChangeNickname,
 } from "../../../core/src/payloads";
 import {
   LobbyRoomState,
@@ -31,6 +32,7 @@ export type OnServerDisconnection = () => void;
 export type OnRoomStateChanged<State> = (state: State) => void;
 
 export class ClientServerConnection {
+  private readonly defaultTimeOut = 5000; // in ms
   private _clientRooms: {
     [roomId: string]: RoomClient<any>,
   } = {};
@@ -82,7 +84,20 @@ export class ClientServerConnection {
     });
     return Promise.race([
       connection,
-      this.serverTimeOut<string>(5000, "Server timed out on login."),
+      this.serverTimeOut<string>(this.defaultTimeOut, "Server timed out on login."),
+    ]);
+  }
+
+  public async changeNickname(nickname: string): Promise<void> {
+    const update = new Promise<void>((resolve) => {
+      const payload: ClientChangeNickname = {
+        nickname,
+      };
+      socket.emit("change_nickname", payload, () => resolve());
+    });
+    return Promise.race([
+      update,
+      this.serverTimeOut<void>(this.defaultTimeOut, "Server timed out on nickname change."),
     ]);
   }
 
@@ -97,7 +112,7 @@ export class ClientServerConnection {
     });
     return Promise.race([
       join,
-      this.serverTimeOut<void>(5000, "Server timed out on room join."),
+      this.serverTimeOut<void>(this.defaultTimeOut, "Server timed out on room join."),
     ]);
   }
 
@@ -112,7 +127,7 @@ export class ClientServerConnection {
     });
     return Promise.race([
       creation,
-      this.serverTimeOut<string>(5000, "Server timed out on room creation."),
+      this.serverTimeOut<string>(this.defaultTimeOut, "Server timed out on room creation."),
     ]);
   }
 

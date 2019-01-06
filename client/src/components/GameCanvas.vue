@@ -5,7 +5,6 @@
 </template>
 
 <script lang="ts">
-import { Render } from "matter-js";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 import Game from "../game";

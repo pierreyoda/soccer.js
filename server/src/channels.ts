@@ -6,6 +6,7 @@ import {
   ClientCreateRoom,
   ServerCreateRoomAck,
   ClientJoinRoom,
+  ClientChangeNickname,
 } from "../../core/src/payloads"; // FIXME: yarn workspace path?
 import logger from "./logger";
 import { GameRoom, Client, LobbyRoom } from "./game";
@@ -48,6 +49,15 @@ const channels = (io: SocketIO.Server) => {
         ack({
           socketId: socket.id,
         });
+      },
+    );
+
+    socket.on(
+      "change_nickname",
+      (data: ClientChangeNickname, ack: () => void) => {
+        logger.info(`Changing nickname "${player.nickname}" to "${data.nickname}" for client ID "${socket.id}".`);
+        player.nickname = data.nickname;
+        ack();
       },
     );
 
