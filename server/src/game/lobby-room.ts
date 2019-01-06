@@ -37,6 +37,7 @@ export default class LobbyRoom extends Room<LobbyRoomState, {}> {
   }
   public roomDeleted(room: GameRoom) {
     --this._state.totalRooms;
+    room.removeAllListeners();
     delete this._state.rooms[room.id];
     logger.info(`Deleted room "${room.name}" with ID "${room.id}".`);
   }

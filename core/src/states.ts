@@ -8,9 +8,9 @@ import {
 export interface GameRoomState {
   messages: ServerChatMessage[];
 }
-export const gameRoomInitialState = {
+export const createGameRoomInitialState = (): GameRoomState => ({
   messages: [],
-};
+});
 
 export interface LobbyRoomState {
   rooms: {

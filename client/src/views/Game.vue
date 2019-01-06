@@ -102,6 +102,7 @@ export default class Game extends Vue {
   onDisconnection() {
     console.log("Disconnected from server.");
     this.loggedIn = this.waitingForServer = false;
+    this.clientId = "";
   }
 
   onLobbyStateUpdate(state: LobbyRoomState) {

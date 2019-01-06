@@ -22,7 +22,7 @@ const channels = (io: SocketIO.Server) => {
   });
   rooms.on("removed", (room: GameRoom) => {
     lobby.roomDeleted(room);
-  })
+  });
 
   io.on("connection", (socket: Socket) => {
     logger.info(`Connection established with client ID = ${socket.id}.`);
@@ -93,7 +93,9 @@ const channels = (io: SocketIO.Server) => {
       },
     );
 
-    socket.on("chat_message", async (text: string) => {
+    socket.on(
+      "chat_message",
+      async (text: string) => {
       if (!player) {
         throw new Error("Channel chat_message: not logged in.");
       }

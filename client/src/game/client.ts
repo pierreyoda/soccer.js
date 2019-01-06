@@ -16,8 +16,8 @@ import {
   LobbyRoomState,
   lobbyRoomInitialState,
   GameRoomState,
-  gameRoomInitialState,
   applyBinaryPatch,
+  createGameRoomInitialState,
 } from "../../../core/src/states";
 
 const socket = io("http://localhost:3030", {
@@ -104,9 +104,9 @@ export class ClientServerConnection {
   public async joinGameRoom(data: ClientJoinRoom): Promise<void> {
     const join = new Promise<void>((resolve) => {
       socket.emit("room_join", data, () => {
-        this._clientRooms[data.roomId] = new RoomClient<GameRoomState>({
-          ...gameRoomInitialState,
-        });
+        this._clientRooms[data.roomId] = new RoomClient<GameRoomState>(
+          createGameRoomInitialState(),
+        );
         resolve();
       });
     });
@@ -119,9 +119,9 @@ export class ClientServerConnection {
   public async createGameRoom(data: ClientCreateRoom): Promise<string> {
     const creation = new Promise<string>((resolve) => {
       socket.emit("room_create", data, (ackData: ServerCreateRoomAck) => {
-        this._clientRooms[ackData.roomId] = new RoomClient<GameRoomState>({
-          ...gameRoomInitialState,
-        });
+        this._clientRooms[ackData.roomId] = new RoomClient<GameRoomState>(
+          createGameRoomInitialState(),
+        );
         resolve(ackData.roomId);
       });
     });

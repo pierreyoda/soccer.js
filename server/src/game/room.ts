@@ -41,10 +41,10 @@ export default abstract class Room<State, Metadata> extends EventEmitter {
     private _maxClients: number | null,
   ) {
     super();
-    this._state = initialState;
+    this._state = { ...initialState };
     this._updateTimer.setInterval(this.synchronizeClients.bind(this), [], `${SYNCHRONIZATION_RATE}m`);
 
-    this._previousState = initialState;
+    this._previousState = { ...initialState };
     this._previousStateEncoded = msgpack.encode(this._previousState);
   }
 
