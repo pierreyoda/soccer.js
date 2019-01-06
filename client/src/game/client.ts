@@ -9,6 +9,7 @@ import {
   ServerCreateRoomAck,
   ClientLogin,
   ClientJoinRoom,
+  ServerLoginAck,
 } from "../../../core/src/payloads";
 import {
   LobbyRoomState,
@@ -70,16 +71,18 @@ export class ClientServerConnection {
     });
   }
 
-  public async login(nickname: string): Promise<void> {
-    const connection = new Promise<void>((resolve) => {
+  public async login(nickname: string): Promise<string> {
+    const connection = new Promise<string>((resolve) => {
       const payload: ClientLogin = {
         nickname,
       };
-      socket.emit("login", payload, () => resolve());
+      socket.emit("login", payload,
+        (ackData: ServerLoginAck) => resolve(ackData.socketId),
+      );
     });
     return Promise.race([
       connection,
-      this.serverTimeOut<void>(5000, "Server timed out on login."),
+      this.serverTimeOut<string>(5000, "Server timed out on login."),
     ]);
   }
 

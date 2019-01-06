@@ -4,6 +4,12 @@ export enum RoomDataType {
   ROOM_STATE_PATCH = 3,
 }
 export type ChatMessageType = "server" | "player";
+export enum PawnMoveDirection {
+  Up,
+  Down,
+  Left,
+  Right,
+}
 
 export interface GameRoomStatus {
   name: string;
@@ -31,6 +37,12 @@ export interface ClientJoinRoom {
 
 export interface ClientChatMessage {
   text: string;
+}
+
+export interface PlayerPawnAction {
+  clientId: string;
+  moving?: PawnMoveDirection;
+  kicking?: boolean;
 }
 
 // Communication payloads from the server to the client.

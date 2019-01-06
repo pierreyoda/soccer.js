@@ -5,7 +5,7 @@
   <div v-else-if="loggedIn">
     <div v-if="!!roomId" class="flex flex-col">
       {{ roomId }}
-      <game-canvas></game-canvas>
+      <game-canvas :client-id="clientId"></game-canvas>
       <chat class="flex-grow" :messages="messages"
         @send-message="(text) => sendMessage(text)">
       </chat>
@@ -71,6 +71,7 @@ export default class Game extends Vue {
   private waitingForServer = false;
   private serverError = false;
   private loggedIn = false;
+  private clientId = "";
   private roomId: string | null = null;
   private dashboardTab: DashboardTab = "main";
   private nickname = "";
@@ -111,7 +112,7 @@ export default class Game extends Vue {
     this.waitingForServer = true;
     // TODO: error handling
     try {
-      await this.serverConnection.login(nickname);
+      this.clientId = await this.serverConnection.login(nickname);
       this.loggedIn = true;
     } catch (error) {
       this.serverError = true;
