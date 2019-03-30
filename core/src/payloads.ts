@@ -52,7 +52,7 @@ export interface PlayerPawnAction {
 // Communication payloads from the server to the client.
 
 export interface ServerLoginAck {
-  socketId: string;
+  clientId: string;
 }
 
 export interface ServerCreateRoomAck {

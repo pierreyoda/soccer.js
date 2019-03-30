@@ -1,13 +1,13 @@
-import app from "./app";
-import logger from "./logger";
+import { NestFactory } from '@nestjs/core';
 
-const port = app.get("port");
-const server = app.listen(port);
+import { AppModule } from './app.module';
+import { LoggerComponent } from './logger/logger.component';
 
-process.on("unhandledRejection", (reason: any, p: any) =>
-  logger.error(`Unhandled Rejection at: Promise ${p}: ${reason}.`),
-);
-
-server.on("listening", () =>
-  logger.info(`Soccer.js server started on ${app.get("host")}:${port}`),
-);
+const bootstrap = async () => {
+  const app = await NestFactory.create(AppModule, {
+    logger: new LoggerComponent(),
+  });
+  app.setGlobalPrefix('api/v1');
+  await app.listen(3001);
+};
+bootstrap();

@@ -14,7 +14,7 @@
     "lint:server": "tslint -c tslint.json './server/**/*.ts'",
     "lint": "yarn lint:server",
     "dev:client": "yarn workspace soccerjs-client run serve",
-    "dev:server": "yarn workspace soccerjs-server run dev",
+    "dev:server": "yarn workspace soccerjs-server run start:dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

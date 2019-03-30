@@ -79,7 +79,7 @@ export class ClientServerConnection {
         nickname,
       };
       socket.emit("login", payload,
-        (ackData: ServerLoginAck) => resolve(ackData.socketId),
+        (ackData: ServerLoginAck) => resolve(ackData.clientId),
       );
     });
     return Promise.race([
