@@ -1,62 +1,66 @@
-/**
- * This injects Tailwind's base styles, which is a combination of
- * Normalize.css and some additional base styles.
- *
- * You can see the styles here:
- * https://github.com/tailwindcss/tailwindcss/blob/master/css/preflight.css
- *
- * If using `postcss-import`, use this import instead:
- *
- * @import "tailwindcss/preflight";
- */
- @tailwind preflight;
+@tailwind base;
 
- /**
-  * This injects any component classes registered by plugins.
-  *
-  * If using `postcss-import`, use this import instead:
-  *
-  * @import "tailwindcss/components";
-  */
- @tailwind components;
+@tailwind components;
 
- /**
-  * Here you would add any of your custom component classes; stuff that you'd
-  * want loaded *before* the utilities so that the utilities could still
-  * override them.
-  *
-  * Example:
-  *
-  * .btn { ... }
-  * .form-input { ... }
-  *
-  * Or if using a preprocessor or `postcss-import`:
-  *
-  * @import "components/buttons";
-  * @import "components/forms";
-  */
+.btn {
+  @apply rounded py-2 px-4 border border-sjs-blue-grey-500
+    text-white font-bold text-lg uppercase;
+  &:hover {
+    @apply bg-sjs-blue-500;
+  }
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+  &.primary {
+    @apply bg-sjs-teal-500;
+    &:hover {
+      @apply bg-sjs-teal-700;
+    }
+  }
+  &:disabled {
+    @apply bg-sjs-blue-grey-300 cursor-not-allowed;
+  }
+  &.cancel {
+    @apply bg-transparent border-none;
+  }
+}
 
- /**
-  * This injects all of Tailwind's utility classes, generated based on your
-  * config file.
-  *
-  * If using `postcss-import`, use this import instead:
-  *
-  * @import "tailwindcss/utilities";
-  */
- @tailwind utilities;
+.dashboard-card {
+  @apply bg-sjs-blue-grey-700 shadow-md rounded px-8 py-6 mb-4;
+  .title {
+    @apply font-bold text-2xl text-sjs-teal-300;
+  }
+}
+.form-card {
+  @apply dashboard-card px-16;
+  .form-title {
+    @apply font-bold text-xl text-sjs-teal-300 pt-3 pb-6;
+  }
+  .form-input-label {
+    @apply font-semibold text-white text-sm mb-1;
+  }
+  .form-input {
+    @apply appearance-none shadow border rounded w-full py-2 px-3
+      text-sjs-blue-grey-800 leading-tight;
+    &::placeholder {
+      @apply text-sjs-blue-grey-500;
+    }
+    &:focus {
+      @apply outline-none shadow-outline;
+    }
+  }
+  .form-input-error {
+    @apply font-bold text-sm text-sjs-red-200 mt-1;
+  }
+  .form-actions {
+    @apply mt-6 mb-3;
+    .btn {
+      @apply mr-4;
+      &:last-child {
+        @apply mr-0;
+      }
+    }
+  }
+}
 
- /**
-  * Here you would add any custom utilities you need that don't come out of the
-  * box with Tailwind.
-  *
-  * Example :
-  *
-  * .bg-pattern-graph-paper { ... }
-  * .skew-45 { ... }
-  *
-  * Or if using a preprocessor or `postcss-import`:
-  *
-  * @import "utilities/background-patterns";
-  * @import "utilities/skew-transforms";
-  */
+@tailwind utilities;

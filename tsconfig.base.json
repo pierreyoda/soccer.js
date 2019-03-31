@@ -3,13 +3,19 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": [
-      "es2018"
+      "es2018",
+      "dom"
     ],
+    // "typeRoots": [
+    //   "node_modules/@types",
+    //   "types"
+    // ],
     "target": "es6",
     "strict": true,
     "noImplicitAny": true,
     "removeComments": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
   }
 }

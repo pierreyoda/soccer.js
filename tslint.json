@@ -10,12 +10,15 @@
     "arrow-parens": false,
     "indent": [true, "spaces", 2],
     "interface-name": false,
+    "max-classes-per-file": false,
     "max-line-length": {
       "options": [120]
     },
+    "member-access": false,
     "object-literal-sort-keys": false,
     "ordered-imports": false,
     "quotemark": [true, "double", "avoid-template"],
-    "trailing-comma": [true, { "multiline": "always" }]
+    "trailing-comma": [true, { "multiline": "always" }],
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
   }
 }
