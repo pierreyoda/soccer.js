@@ -1,42 +1,9 @@
-/**
- * This injects Tailwind's base styles, which is a combination of
- * Normalize.css and some additional base styles.
- *
- * You can see the styles here:
- * https://github.com/tailwindcss/tailwindcss/blob/master/css/preflight.css
- *
- * If using `postcss-import`, use this import instead:
- *
- * @import "tailwindcss/preflight";
- */
- @tailwind preflight;
+@tailwind base;
 
- /**
-  * This injects any component classes registered by plugins.
-  *
-  * If using `postcss-import`, use this import instead:
-  *
-  * @import "tailwindcss/components";
-  */
- @tailwind components;
+@tailwind components;
 
- /**
-  * Here you would add any of your custom component classes; stuff that you'd
-  * want loaded *before* the utilities so that the utilities could still
-  * override them.
-  *
-  * Example:
-  *
-  * .btn { ... }
-  * .form-input { ... }
-  *
-  * Or if using a preprocessor or `postcss-import`:
-  *
-  * @import "components/buttons";
-  * @import "components/forms";
-  */
 .dashboard-card {
-  @apply bg-grey-darkest shadow-md rounded px-8 py-6 mb-4;
+  @apply bg-gray-700 shadow-md rounded px-8 py-6 mb-4;
 }
 .form-card {
   @apply dashboard-card;
@@ -46,21 +13,21 @@
 }
 .form-input {
   @apply shadow appearance-none border rounded w-full py-2 px-3
-    text-grey-darker leading-tight;
-  &:focus {
-    @apply outline-none shadow-outline;
-  }
+  text-gray-600 leading-tight;
+&:focus {
+  @apply outline-none shadow-outline;
+}
 }
 .form-btn {
-  @apply py-2 px-4 bg-blue text-white font-bold rounded;
+  @apply py-2 px-4 bg-blue-500 text-white font-bold rounded;
   &:hover {
-    @apply bg-blue-dark;
+    @apply bg-blue-700;
   }
   &:focus {
     @apply outline-none shadow-outline;
   }
   &:disabled {
-    @apply bg-blue-light cursor-not-allowed;
+    @apply bg-blue-300 cursor-not-allowed;
   }
 }
 .form-btn-cancel {
@@ -71,43 +38,20 @@
 }
 
 .dashboard-btn {
-  @apply py-2 px-4 bg-blue-dark text-white font-bold rounded;
+  @apply py-2 px-4 bg-blue-700 text-white font-bold rounded;
   &:hover {
-    @apply bg-blue-darkest;
+    @apply bg-blue-800;
   }
   &:disabled {
-    @apply bg-blue opacity-50 cursor-not-allowed;
+    @apply bg-blue-500 opacity-50 cursor-not-allowed;
   }
 }
 
 .rooms-list-item {
   @apply py-1;
-  &.selected, &:hover {
-    @apply bg-blue-dark;
-  }
+&.selected, &:hover {
+  @apply bg-blue-700;
+}
 }
 
- /**
-  * This injects all of Tailwind's utility classes, generated based on your
-  * config file.
-  *
-  * If using `postcss-import`, use this import instead:
-  *
-  * @import "tailwindcss/utilities";
-  */
- @tailwind utilities;
-
- /**
-  * Here you would add any custom utilities you need that don't come out of the
-  * box with Tailwind.
-  *
-  * Example :
-  *
-  * .bg-pattern-graph-paper { ... }
-  * .skew-45 { ... }
-  *
-  * Or if using a preprocessor or `postcss-import`:
-  *
-  * @import "utilities/background-patterns";
-  * @import "utilities/skew-transforms";
-  */
+@tailwind utilities;
