@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="flex flex-col items-center">
-    <nav class="w-full h-full flex flex-row items-center justify-between">
+    <nav class="w-full flex flex-row items-center justify-between">
       <h1 class="brand">
         Soccer.js
       </h1>
@@ -24,14 +24,17 @@
 
 body {
   font-family: 'Montserrat', 'Roboto', sans-serif;
+  height: 100%;
 }
 
 #app {
   @apply min-h-screen text-center;
 }
 
+$navbar-height: 60px;
 nav {
   @apply bg-sjs-teal-600 py-2 px-8;
+  height: $navbar-height;
   .brand {
     @apply font-bold text-2xl text-white;
   }
@@ -41,7 +44,7 @@ nav {
       @apply mr-0;
     }
     &:hover {
-      @apply text-sjs-blue-grey-300;
+      @apply text-sjs-blue-grey-200;
     }
     &.router-link-exact-active {
       @apply text-sjs-blue-100;
@@ -52,10 +55,14 @@ nav {
       width: 30px;
       height: auto;
     }
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 
 .content {
-  @apply w-full h-full bg-sjs-blue-grey-050;
+  @apply w-full bg-sjs-blue-grey-050;
+  min-height: calc(100vh - #{$navbar-height});
 }
 </style>
