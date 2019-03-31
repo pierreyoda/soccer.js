@@ -1,7 +1,7 @@
 <template>
   <section class="flex flex-col md:flex-row hero">
-    <div class="w-full md:w-1/2 flex flex-col items-center p-12">
-      <div class="hero-img-container">
+    <div class="w-full md:w-2/5 flex flex-col items-center p-12">
+      <div class="flex flex-col items-center justify-center hero-img-container">
         <img alt="Vue logo" src="../assets/logo.png" class="hero-img">
       </div>
       <router-link to="/play"
@@ -9,12 +9,12 @@
         Play now!
       </router-link>
     </div>
-    <div class="w-full md:w-1/2 flex flex-col items-start py-8 px-8 text-left">
+    <div class="w-full md:w-3/5 flex flex-col items-start py-8 px-8 text-left">
       <h2 class="font-bold text-sjs-teal-700 text-5xl mb-3">
         Soccer.js
       </h2>
       <p class="font-semibold text-sjs-teal-700 mb-12">
-        Soccer.js is a free, open-source multiplayer top-down football-like game
+        Soccer.js is a free, open-source multiplayer top-down football game
         based on physics and teamplay.<br><br>
         Open-source clone of Haxball.
       </p>
@@ -22,7 +22,7 @@
         <div v-for="(feature, i) in features" :key="i"
           class="flex flex-row items-center justify-start hero-feature">
           <div class="flex flex-col items-center justify-center icon-container">
-            <img class="icon" :src="feature.iconImg" :alt="feature.title">
+            <component class="icon" :is="feature.iconComponent" />
           </div>
           <div class="flex flex-col items-start text-left">
             <h4 class="font-bold text-sjs-blue-grey-800">
@@ -41,32 +41,44 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
+import IconServer from "../assets/icons/icon-server.svg";
+import IconChart from "../assets/icons/icon-chart.svg";
+import IconUserCircle from "../assets/icons/icon-user-circle.svg";
+import IconCode from "../assets/icons/icon-code.svg";
+
 interface Feature {
-  iconImg: string;
+  iconComponent: string;
   title: string;
   description: string;
 }
 
-@Component
+@Component({
+  components: {
+    IconServer,
+    IconChart,
+    IconUserCircle,
+    IconCode,
+  },
+})
 export default class Home extends Vue {
   readonly features: Feature[] = [
     {
-      iconImg: require("../assets/icons/icon-server.svg"),
+      iconComponent: "IconServer",
       title: "Authoritative server",
       description: "A centralized server architecture for lag compensation and anti-cheat protection.",
     },
     {
-      iconImg: require("../assets/icons/icon-chart.svg"),
+      iconComponent: "IconChart",
       title: "Statistics",
       description: "Live statistics on the match in progress.",
     },
     {
-      iconImg: require("../assets/icons/icon-user-circle.svg"),
+      iconComponent: "IconUserCircle",
       title: "Accounts",
       description: "An optional, free player accounts system.",
     },
     {
-      iconImg: require("../assets/icons/icon-code.svg"),
+      iconComponent: "IconCode",
       title: "Open-source",
       description: "A fully open-source code under the MIT license. Contributions are welcome!",
     },
@@ -76,15 +88,13 @@ export default class Home extends Vue {
 
 <style lang="scss" scoped>
 .hero-img-container {
-  width: auto;
-  height: 400px;
+  @apply w-auto h-full;
+  max-height: 400px;
   @screen md {
-    height: 500px;
+    max-height: 500px;
   }
   img {
-    width: auto;
-    height: 100%;
-    max-width: 100%;
+    @apply w-full h-auto max-w-full;
   }
 }
 
@@ -94,13 +104,20 @@ export default class Home extends Vue {
     @apply mb-0;
   }
   .icon-container {
-    @apply rounded-full bg-sjs-blue-grey-200 mr-6;
+    @apply rounded-full bg-sjs-blue-grey-100 mr-6;
     $size: 50px;
     width: $size;
     height: $size;
     .icon {
-      width: $size / 2;
-      height: $size / 2;
+      $icon-size: 0.6 * $size;
+      width: $icon-size;
+      height: $icon-size;
+      .primary {
+        fill: white;
+      }
+      .secondary {
+        fill: #199473;
+      }
     }
   }
 }
