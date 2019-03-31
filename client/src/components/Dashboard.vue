@@ -1,22 +1,22 @@
 <template>
-  <div class="w-full max-w-md mx-auto dashboard-card">
-    <div class="flex justify-between mb-4">
-      <h2 class="text-white text-base">Lobby</h2>
+  <div class="w-full max-w-5xl mx-auto dashboard-card px-16">
+    <div class="flex flex-col md:flex-row items-center md:justify-between mb-4">
+      <h2 class="title">Lobby</h2>
       <span class="text-white text-sm">
         {{ playersInGame }} players in {{ rooms.length }} rooms
         &nbsp;-&nbsp;
         {{ playersInLobby }} in lobby
       </span>
     </div>
-    <div class="flex justify-around mb-4">
-      <button class="dashboard-btn" @click="joinRoom(selectedRoomId)"
+    <div class="flex justify-between mb-4">
+      <button class="btn primary" @click="joinRoom(selectedRoomId)"
         :disabled="!selectedRoomId">
         Join Room
       </button>
-      <button class="dashboard-btn" @click="$emit('create-room')">
+      <button class="btn primary" @click="$emit('create-room')">
         Create Room
       </button>
-      <button class="dashboard-btn" @click="$emit('change-nickname')">
+      <button class="btn" @click="$emit('change-nickname')">
         Change Nickname
       </button>
     </div>

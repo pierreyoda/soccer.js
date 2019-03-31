@@ -2,56 +2,65 @@
 
 @tailwind components;
 
-.dashboard-card {
-  @apply bg-gray-700 shadow-md rounded px-8 py-6 mb-4;
-}
-.form-card {
-  @apply dashboard-card;
-}
-.form-title {
-  @apply text-white text-lg;
-}
-.form-input {
-  @apply shadow appearance-none border rounded w-full py-2 px-3
-  text-gray-600 leading-tight;
-&:focus {
-  @apply outline-none shadow-outline;
-}
-}
-.form-btn {
-  @apply py-2 px-4 bg-blue-500 text-white font-bold rounded;
+.btn {
+  @apply rounded py-2 px-4 border border-sjs-blue-grey-500
+    text-white font-bold text-lg uppercase;
   &:hover {
-    @apply bg-blue-700;
+    @apply bg-sjs-blue-500;
   }
   &:focus {
     @apply outline-none shadow-outline;
   }
-  &:disabled {
-    @apply bg-blue-300 cursor-not-allowed;
+  &.primary {
+    @apply bg-sjs-teal-500;
+    &:hover {
+      @apply bg-sjs-teal-700;
+    }
   }
-}
-.form-btn-cancel {
-  @apply py-2 px-4 text-white font-bold;
-  &:hover {
-    @apply underline;
+  &:disabled {
+    @apply bg-sjs-blue-grey-300 cursor-not-allowed;
+  }
+  &.cancel {
+    @apply bg-transparent border-none;
   }
 }
 
-.dashboard-btn {
-  @apply py-2 px-4 bg-blue-700 text-white font-bold rounded;
-  &:hover {
-    @apply bg-blue-800;
-  }
-  &:disabled {
-    @apply bg-blue-500 opacity-50 cursor-not-allowed;
+.dashboard-card {
+  @apply bg-sjs-blue-grey-700 shadow-md rounded px-8 py-6 mb-4;
+  .title {
+    @apply font-bold text-2xl text-sjs-teal-300;
   }
 }
-
-.rooms-list-item {
-  @apply py-1;
-&.selected, &:hover {
-  @apply bg-blue-700;
-}
+.form-card {
+  @apply dashboard-card px-16;
+  .form-title {
+    @apply font-bold text-xl text-sjs-teal-300 pt-3 pb-6;
+  }
+  .form-input-label {
+    @apply font-semibold text-white text-sm mb-1;
+  }
+  .form-input {
+    @apply appearance-none shadow border rounded w-full py-2 px-3
+      text-sjs-blue-grey-800 leading-tight;
+    &::placeholder {
+      @apply text-sjs-blue-grey-500;
+    }
+    &:focus {
+      @apply outline-none shadow-outline;
+    }
+  }
+  .form-input-error {
+    @apply font-bold text-sm text-sjs-red-200 mt-1;
+  }
+  .form-actions {
+    @apply mt-6 mb-3;
+    .btn {
+      @apply mr-4;
+      &:last-child {
+        @apply mr-0;
+      }
+    }
+  }
 }
 
 @tailwind utilities;

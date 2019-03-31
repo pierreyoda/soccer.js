@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full px-6 py-2">
+  <div class="w-full py-2">
     <div class="flex">
       <div class="w-3/5 text-left text-white">
         Room name
@@ -59,5 +59,11 @@ export default class RoomsList extends Vue {
 <style lang="scss" scoped>
 .rooms-list {
   max-height: 500px;
+  .rooms-list-item {
+    @apply py-1;
+    &.selected, &:hover {
+      @apply bg-blue-700;
+    }
+  }
 }
 </style>

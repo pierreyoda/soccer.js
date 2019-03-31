@@ -6,10 +6,10 @@
         Pending...
       </span>
     </div>
-    <div v-else-if="!loggedIn" class="flex items-center justify-center">
+    <div v-else-if="!loggedIn" class="w-full flex flex-col items-center justify-start pt-12">
       <login @login="(nickname) => authenticate(nickname)"></login>
     </div>
-    <div v-else>
+    <div v-else class="w-full flex flex-col items-center justify-start pt-12 px-4">
       <div v-if="!!roomId" class="flex flex-col">
         <game-canvas :client-id="clientId"></game-canvas>
         <chat class="flex-grow" :messages="messages"

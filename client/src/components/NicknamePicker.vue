@@ -1,24 +1,23 @@
 <template>
-  <div class="w-full max-w-xs mx-auto">
-    <form class="form-card" @submit.prevent="submit">
-      <h2 class="form-title">
+  <div class="w-full max-w-md mx-auto px-2">
+    <form class="w-full form-card" @submit.prevent="submit">
+      <h3 class="form-title">
         Choose your nickname
-      </h2>
-      <div class="mb-4">
-        <label class="text-white text-sm font-bold" for="nickname">
-          Nickname:
+      </h3>
+      <div class="flex flex-col items-start mb-4">
+        <label class="form-input-label" for="nickname">
+          Nickname
         </label>
-        <input id="nickname" v-model="nickname" @keyup.enter="submit"
-          class="form-input">
-        <span v-if="nickname.trim() && error" class="text-sm text-red-dark">
-          Invalid nickname.
+        <input id="nickname" v-model="nickname" @keyup.enter="submit" class="form-input">
+        <span class="form-input-error">
+          {{ !!nickname.trim() && error ? 'Invalid nickname.' : '&nbsp;' }}
         </span>
       </div>
-      <div>
-        <button type="submit" :disabled="!nicknameValid" class="form-btn">
+      <div class="form-actions">
+        <button type="submit" :disabled="!nicknameValid" class="btn primary">
           Ok
         </button>
-        <button v-if="!!currentNickname" type="button" class="form-btn-cancel"
+        <button v-if="!!currentNickname" type="button" class="btn cancel"
           @click="$emit('cancel')">
           Back
         </button>
@@ -47,12 +46,12 @@ export default class NicknamePicker extends Vue {
   private error = false;
 
   submit() {
-    if (!this.nicknameValid) return;
+    if (!this.nicknameValid) { return; }
     this.$emit('picked', this.nickname.trim());
   }
 
   get nicknameValid(): boolean {
-    if (this.nickname === this.currentNickname) return false;
+    if (this.nickname === this.currentNickname) { return false; }
     this.error = this.nickname.trim().length < this.minNicknameLength;
     return !this.error;
   }

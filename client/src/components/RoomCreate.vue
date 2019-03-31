@@ -1,20 +1,20 @@
 <template>
-  <div class="w-full max-w-xs mx-auto">
-    <form class="form-card" @submit.prevent="submit">
-      <h2 class="form-title">
+  <div class="w-full max-w-md mx-auto px-2">
+    <form class="w-full form-card" @submit.prevent="submit">
+      <h3 class="form-title">
         Create a new room
-      </h2>
-      <div class="mb-4">
-        <label class="text-white text-sm font-bold" for="name">
-          Room name:
+      </h3>
+      <div class="flex flex-col items-start mb-4">
+        <label class="form-input-label" for="name">
+          Room name
         </label>
         <input id="name" v-model="name" class="form-input">
       </div>
-      <div>
-        <button type="submit" :disabled="!formValid" class="form-btn">
+      <div class="form-actions">
+        <button type="submit" :disabled="!formValid" class="btn primary">
           Ok
         </button>
-        <button type="button" class="form-btn-cancel" @click="$emit('cancel')">
+        <button type="button" class="btn cancel" @click="$emit('cancel')">
           Back
         </button>
       </div>
