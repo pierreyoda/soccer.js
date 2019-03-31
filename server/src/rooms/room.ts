@@ -98,7 +98,7 @@ export default abstract class Room<State, Metadata> {
     client.onRoomLeft();
     client.socket.join(this.id);
     client.onRoomJoined(this.id);
-    this.debug(`Player "${client.nickname}" has joined`);
+    this.debug(`Player "${client.nickname}" (ID "${client.socket.id}") has joined.`);
     ++this._clientsCount;
     // send the full state to initiate state synchronization
     const data = msgpack.encode([RoomDataType.ROOM_STATE_FULL, this._state]);
@@ -116,6 +116,7 @@ export default abstract class Room<State, Metadata> {
     if (this._clientsCount > 0) {
       --this._clientsCount;
     }
+    this.debug(`Player "${client.nickname}" (ID "${client.socket.id}") has left.`);
     await this.clientHasLeft(client);
   }
 

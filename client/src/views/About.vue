@@ -15,7 +15,7 @@
     </p>
     <h3>Server</h3>
     <p>
-      The Soccer.js server uses an Express-based Node.js stack built on Feathers.
+      The Soccer.js server uses a Node.js stack built on NestJS.
       Communication with the clients is achieved with socket.io.
     </p>
   </div>

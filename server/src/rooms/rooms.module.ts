@@ -7,5 +7,8 @@ import { RoomsService } from "./rooms.service";
   providers: [
     RoomsService,
   ],
+  exports: [
+    RoomsService,
+  ],
 })
 export class RoomsModule {}

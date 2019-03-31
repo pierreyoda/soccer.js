@@ -1,26 +1,33 @@
+import { Logger } from "@nestjs/common";
 import {
   WebSocketGateway,
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
-} from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
-import * as debugLib from 'debug';
+} from "@nestjs/websockets";
+import { Socket, Server } from "socket.io";
+import * as debugLib from "debug";
 
-import { RoomsService } from './rooms/rooms.service';
-import { PlayersService } from './players/players.service';
-import { ClientLogin, ClientChangeNickname, ClientCreateRoom, ServerCreateRoomAck, ClientJoinRoom, ServerLoginAck } from '../../core/src/payloads';
-import { Logger } from '@nestjs/common';
+import { RoomsService } from "./rooms/rooms.service";
+import { PlayersService } from "./players/players.service";
+import {
+  ClientLogin,
+  ServerLoginAck,
+  ClientChangeNickname,
+  ClientCreateRoom,
+  ServerCreateRoomAck,
+  ClientJoinRoom,
+} from "../../core/src/payloads";
 
-const debug = debugLib('soccerjs:rooms:gateway');
+const debug = debugLib("soccerjs:rooms:gateway");
 
 @WebSocketGateway()
-export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private readonly logger = new Logger(RoomsGateway.name);
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  private readonly logger = new Logger(AppGateway.name);
 
   @WebSocketServer()
-  server!: Server;
+  private server!: Server;
 
   constructor(
     private readonly playersService: PlayersService,
@@ -39,8 +46,8 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (room) {
         await room.clientLeave(player);
       }
+      this.roomsService.playerLeftGame(player, room);
     }
-    this.roomsService.playerLeftGame();
   }
 
   @SubscribeMessage("login")

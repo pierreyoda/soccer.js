@@ -38,7 +38,6 @@
 
 <script lang="ts">
 import * as msgpack from "msgpack-lite";
-import { Application } from "@feathersjs/feathers";
 import { Component, Vue } from "vue-property-decorator";
 
 import { ClientServerConnection } from "../game";

@@ -1,6 +1,4 @@
 import io from "socket.io-client";
-import feathers from "@feathersjs/feathers";
-import socketio from "@feathersjs/socketio-client";
 import * as msgpack from "msgpack-lite";
 
 import {
@@ -20,20 +18,17 @@ import {
   createGameRoomInitialState,
 } from "../../../core/src/states";
 
-const socket = io("http://localhost:3030", {
+const socket = io("http://localhost:3001", {
   transports: ["websocket"],
   forceNew: true,
 });
-
-const client = feathers();
-client.configure(socketio(socket));
 
 export type OnServerDisconnection = () => void;
 export type OnRoomStateChanged<State> = (state: State) => void;
 
 export class ClientServerConnection {
-  private readonly defaultTimeOut = 5000; // in ms
-  private _clientRooms: {
+  private readonly DEFAULT_TIMEOUT = 5000; // in ms
+  private clientRooms: {
     [roomId: string]: RoomClient<any>,
   } = {};
 
@@ -42,17 +37,17 @@ export class ClientServerConnection {
     onLobbyRoomStateChanged: OnRoomStateChanged<LobbyRoomState>,
     onGameRoomStateChanged: OnRoomStateChanged<GameRoomState>,
   ) {
-    this._clientRooms._lobby = new RoomClient<LobbyRoomState>({
+    this.clientRooms._lobby = new RoomClient<LobbyRoomState>({
       ...lobbyRoomInitialState,
     });
 
     socket.on("disconnect", () => onDisconnect());
 
     socket.on("room_data", (roomId: string, binaryData: Buffer) => {
-      const clientRoom = this._clientRooms[roomId];
+      const clientRoom = this.clientRooms[roomId];
       if (!clientRoom) {
         console.error(`Unregistered room client "${roomId}"`,
-          Object.keys(this._clientRooms));
+          Object.keys(this.clientRooms));
         return;
       }
       const data = msgpack.decode(new Uint8Array(binaryData));
@@ -74,17 +69,21 @@ export class ClientServerConnection {
   }
 
   public async login(nickname: string): Promise<string> {
-    const connection = new Promise<string>((resolve) => {
+    const connection = new Promise<string>((resolve, reject) => {
       const payload: ClientLogin = {
         nickname,
       };
-      socket.emit("login", payload,
-        (ackData: ServerLoginAck) => resolve(ackData.clientId),
-      );
+      socket.emit("login", payload, (ackData: ServerLoginAck | null) => {
+        if (ackData) {
+          resolve(ackData.clientId);
+        } else {
+          reject("Could not login and join the lobby.");
+        }
+      });
     });
     return Promise.race([
       connection,
-      this.serverTimeOut<string>(this.defaultTimeOut, "Server timed out on login."),
+      this.serverTimeOut<string>(this.DEFAULT_TIMEOUT, "Server timed out on login."),
     ]);
   }
 
@@ -97,14 +96,18 @@ export class ClientServerConnection {
     });
     return Promise.race([
       update,
-      this.serverTimeOut<void>(this.defaultTimeOut, "Server timed out on nickname change."),
+      this.serverTimeOut<void>(this.DEFAULT_TIMEOUT, "Server timed out on nickname change."),
     ]);
   }
 
   public async joinGameRoom(data: ClientJoinRoom): Promise<void> {
-    const join = new Promise<void>((resolve) => {
-      socket.emit("room_join", data, () => {
-        this._clientRooms[data.roomId] = new RoomClient<GameRoomState>(
+    const join = new Promise<void>((resolve, reject) => {
+      socket.emit("room_join", data, (success: boolean) => {
+        if (!success) {
+          reject("Could not join the room.");
+          return;
+        }
+        this.clientRooms[data.roomId] = new RoomClient<GameRoomState>(
           createGameRoomInitialState(),
         );
         resolve();
@@ -112,14 +115,18 @@ export class ClientServerConnection {
     });
     return Promise.race([
       join,
-      this.serverTimeOut<void>(this.defaultTimeOut, "Server timed out on room join."),
+      this.serverTimeOut<void>(this.DEFAULT_TIMEOUT, "Server timed out on room join."),
     ]);
   }
 
   public async createGameRoom(data: ClientCreateRoom): Promise<string> {
-    const creation = new Promise<string>((resolve) => {
-      socket.emit("room_create", data, (ackData: ServerCreateRoomAck) => {
-        this._clientRooms[ackData.roomId] = new RoomClient<GameRoomState>(
+    const creation = new Promise<string>((resolve, reject) => {
+      socket.emit("room_create", data, (ackData: ServerCreateRoomAck | null) => {
+        if (!ackData) {
+          reject("Could not create new room.");
+          return;
+        }
+        this.clientRooms[ackData.roomId] = new RoomClient<GameRoomState>(
           createGameRoomInitialState(),
         );
         resolve(ackData.roomId);
@@ -127,7 +134,7 @@ export class ClientServerConnection {
     });
     return Promise.race([
       creation,
-      this.serverTimeOut<string>(this.defaultTimeOut, "Server timed out on room creation."),
+      this.serverTimeOut<string>(this.DEFAULT_TIMEOUT, "Server timed out on room creation."),
     ]);
   }
 

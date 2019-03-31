@@ -25,7 +25,6 @@ export class RoomsService {
       this.lobby.socketServer = socketServer;
     }
 
-    debug(`Player "${player.nickname}" (ID "${player.socket.id}") has joined the lobby.`);
     const success = await this.lobby.clientRequestJoin(player);
     if (!success) {
       this.logger.error(`Player with ID "${player.socket.id}" failed to join the lobby.`);
@@ -39,7 +38,11 @@ export class RoomsService {
     this.lobby.roomUpdated(room);
   }
 
-  playerLeftGame() {
+  playerLeftGame(player: PlayerClient, room: GameRoom | null) {
+    if (room) {
+      this.lobby.roomUpdated(room);
+      // TODO: delete empty rooms?
+    }
     this.lobby.playerDisconnected();
   }
 
@@ -53,6 +56,7 @@ export class RoomsService {
 
   async createGameRoom(socketServer: Server, data: ClientCreateRoom): Promise<GameRoom> {
     const roomId = this.generateGameRoomId();
+    debug(`Creating new game room "${roomId}".`);
     const room = new GameRoom(socketServer, roomId, {
       name: data.name,
       showInList: data.showInList,
