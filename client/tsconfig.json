@@ -5,8 +5,9 @@
     "module": "esnext",
     "outDir": "../dist/client",
     "baseUrl": ".",
-    "types": [
-      "webpack-env"
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
     ],
     "paths": {
       "@/*": [
@@ -27,6 +28,7 @@
   ],
   "include": [
     "src/**/*.ts",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "types/**/*.ts"
   ]
 }

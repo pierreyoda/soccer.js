@@ -1,44 +1,50 @@
 <template>
-  <div v-if="waitingForServer">
-    Pending...
-  </div>
-  <div v-else-if="loggedIn">
-    <div v-if="!!roomId" class="flex flex-col">
-      <game-canvas :client-id="clientId"></game-canvas>
-      <chat class="flex-grow" :messages="messages"
-        @send-message="(text) => sendMessage(text)">
-      </chat>
+  <section class="w-full h-full flex flex-col items-center justify-start">
+    <div v-if="waitingForServer" class="h-full flex flex-col justify-center">
+      <semipolar-spinner :animation-duration="2000" :size="125" color="#199473" />
+      <span class="font-semibold text-sm text-sjs-blue-grey-800 pt-2">
+        Pending...
+      </span>
     </div>
-    <template v-else>
-      <template v-if="dashboardTab === 'main'">
-        <dashboard :lobby-state="lobbyRoomState"
-          @create-room="dashboardTab = 'create-room'"
-          @join-room="(data) => joinRoom(data)"
-          @change-nickname="dashboardTab= 'change-nickname'">
-        </dashboard>
+    <div v-else-if="!loggedIn" class="flex items-center justify-center">
+      <login @login="(nickname) => authenticate(nickname)"></login>
+    </div>
+    <div v-else>
+      <div v-if="!!roomId" class="flex flex-col">
+        <game-canvas :client-id="clientId"></game-canvas>
+        <chat class="flex-grow" :messages="messages"
+          @send-message="text => sendMessage(text)">
+        </chat>
+      </div>
+      <template v-else>
+        <template v-if="dashboardTab === 'main'">
+          <dashboard :lobby-state="lobbyRoomState"
+            @create-room="dashboardTab = 'create-room'"
+            @join-room="data => joinRoom(data)"
+            @change-nickname="dashboardTab= 'change-nickname'">
+          </dashboard>
+        </template>
+        <template v-else-if="dashboardTab === 'create-room'">
+          <room-create
+            @create-room="data => createRoom(data)"
+            @cancel="dashboardTab = 'main'">
+          </room-create>
+        </template>
+        <template v-else-if="dashboardTab === 'change-nickname'">
+          <nickname-picker :current-nickname="nickname"
+            @picked="nickname => changeNickname(nickname)"
+            @cancel="dashboardTab = 'main'">
+          </nickname-picker>
+        </template>
       </template>
-      <template v-else-if="dashboardTab === 'create-room'">
-        <room-create
-          @create-room="(data) => createRoom(data)"
-          @cancel="dashboardTab = 'main'">
-        </room-create>
-      </template>
-      <template v-else-if="dashboardTab === 'change-nickname'">
-        <nickname-picker :current-nickname="nickname"
-          @picked="nickname => changeNickname(nickname)"
-          @cancel="dashboardTab = 'main'">
-        </nickname-picker>
-      </template>
-    </template>
-  </div>
-  <div class="flex items-center" v-else>
-    <login @login="(nickname) => authenticate(nickname)"></login>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
 import * as msgpack from "msgpack-lite";
 import { Component, Vue } from "vue-property-decorator";
+import SemipolarSpinner from 'epic-spinners/src/components/lib/SemipolarSpinner.vue';
 
 import { ClientServerConnection } from "../game";
 import Login from "@/components/Login.vue";
@@ -64,6 +70,7 @@ type DashboardTab = "main" | "create-room" | "change-nickname";
 
 @Component({
   components: {
+    SemipolarSpinner,
     Login,
     Dashboard,
     RoomCreate,
